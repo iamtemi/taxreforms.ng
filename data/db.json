@@ -1,0 +1,130 @@
+{
+  "documents": [
+    {
+      "id": "files/lbdd4xsk4p6n",
+      "displayName": "business-facilitation-act-2022.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/lbdd4xsk4p6n",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:37:55.506Z"
+    },
+    {
+      "id": "files/c1lwlnjpkt3c",
+      "displayName": "cama-2020.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/c1lwlnjpkt3c",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:37:56.917Z"
+    },
+    {
+      "id": "files/rb9ute7hm61s",
+      "displayName": "ecs-2011.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/rb9ute7hm61s",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:37:58.773Z"
+    },
+    {
+      "id": "files/c43ib8xgptkl",
+      "displayName": "itf-act.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/c43ib8xgptkl",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:38:01.863Z"
+    },
+    {
+      "id": "files/flsozmomg7w6",
+      "displayName": "jrb-est-act.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/flsozmomg7w6",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:38:05.953Z"
+    },
+    {
+      "id": "files/kmb959pbyv7e",
+      "displayName": "nrs-est-act.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/kmb959pbyv7e",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:38:11.510Z"
+    },
+    {
+      "id": "files/z5u2uj9m17pt",
+      "displayName": "nta-2025.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/z5u2uj9m17pt",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:38:35.709Z"
+    },
+    {
+      "id": "files/i7jabku15w43",
+      "displayName": "ntaa-2025.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/i7jabku15w43",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:38:47.090Z"
+    },
+    {
+      "id": "files/lz0fyum6mzyq",
+      "displayName": "prnsion-reform-act-2014.pdf",
+      "uri": "https://generativelanguage.googleapis.com/v1beta/files/lz0fyum6mzyq",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:38:48.417Z"
+    },
+    {
+      "id": "",
+      "displayName": "Business Facilitation Act 2022",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T13:59:40.541Z"
+    },
+    {
+      "id": "",
+      "displayName": "Cama 2020",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:00:10.656Z"
+    },
+    {
+      "id": "",
+      "displayName": "Employee Compensation Act 2010",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:00:20.861Z"
+    },
+    {
+      "id": "",
+      "displayName": "Industrial Trust Fund Act",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:00:31.388Z"
+    },
+    {
+      "id": "",
+      "displayName": "Joint Revenue Board Establishment Act",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:00:42.687Z"
+    },
+    {
+      "id": "",
+      "displayName": "Nigeria Revenue Service Establishment Act",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:00:55.983Z"
+    },
+    {
+      "id": "",
+      "displayName": "Nigeria Tax Act 2025",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:01:48.162Z"
+    },
+    {
+      "id": "",
+      "displayName": "Nigeria Tax Admin Act 2025",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:02:12.906Z"
+    },
+    {
+      "id": "",
+      "displayName": "Pension Reform Act 2014",
+      "uri": "",
+      "mimeType": "application/pdf",
+      "uploadDate": "2026-01-01T14:02:20.569Z"
+    }
+  ]
+}
