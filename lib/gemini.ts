@@ -6,7 +6,7 @@ if (!apiKey) {
   throw new Error("GEMINI_API_KEY is not defined in environment variables");
 }
 
-export const ai = new GoogleGenAI({ key: apiKey });
+export const ai = new GoogleGenAI({ apiKey });
 
 // Helper to get or create the Tax Knowledge Base store
 export const getTaxStore = async () => {
