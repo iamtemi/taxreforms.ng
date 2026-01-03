@@ -125,6 +125,7 @@ export default function ChatInterface() {
             type="text"
             className="flex-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             placeholder="Ask about Nigerian tax laws..."
+            aria-label="Ask a question about Nigerian tax laws"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -133,6 +134,7 @@ export default function ChatInterface() {
           <button
             onClick={sendMessage}
             disabled={isLoading || !input.trim()}
+            type="button"
             className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg px-6 font-medium transition-colors"
           >
             Send

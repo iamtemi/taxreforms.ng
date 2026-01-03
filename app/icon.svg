@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Tax Reform Assistant">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16a34a" />
+      <stop offset="1" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#g)" />
+  <path
+    d="M20 42V22h6.5c5.8 0 9.8 3.8 9.8 9.9s-4 10.1-9.8 10.1H20zm6.2-4.3c3.5 0 5.7-2.2 5.7-5.8s-2.2-5.6-5.7-5.6h-1.6v11.4h1.6zM40.2 42V22h3.9v16.9h8V42h-11.9z"
+    fill="#f8fafc"
+  />
+</svg>
