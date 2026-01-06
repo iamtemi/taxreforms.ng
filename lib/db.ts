@@ -24,7 +24,8 @@ export type StoredDocument = {
 export const getDocuments = (): StoredDocument[] => {
   try {
     const data = fs.readFileSync(DB_PATH, "utf-8");
-    return JSON.parse(data).documents;
+    const parsed = JSON.parse(data);
+    return Array.isArray(parsed?.documents) ? parsed.documents : [];
   } catch (error) {
     return [];
   }

@@ -26,7 +26,7 @@ export default function Home() {
           </p>
         </div>
 
-        <section className="flex-1 min-h-[500px] h-[calc(100vh-220px)]">
+        <section className="flex-1 min-h-125 h-[calc(100vh-220px)]">
           <ChatInterface />
         </section>
       </div>
