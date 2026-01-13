@@ -25,7 +25,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
+  height: 100%;
+  overflow: hidden;
   overscroll-behavior: none;
+  position: relative;
 }

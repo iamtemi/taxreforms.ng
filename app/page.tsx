@@ -7,7 +7,7 @@ export default function Home() {
   const [hasUserMessage, setHasUserMessage] = useState(false);
 
   return (
-    <main className="flex overflow-hidden h-screen flex-col bg-zinc-50 dark:bg-black font-sans">
+    <main className="flex overflow-hidden h-dvh flex-col bg-zinc-50 dark:bg-black font-sans">
       <header className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-black/50 backdrop-blur-md sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
