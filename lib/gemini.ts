@@ -103,7 +103,7 @@ export const uploadFileToStore = async (
   filePath: string,
   mimeType: string,
   displayName: string
-) => {
+): Promise<{ name?: string; uri?: string } | null> => {
   const ai = getAI();
   if (!ai) {
     throw new Error("GEMINI_API_KEY is not defined. Cannot upload files.");
@@ -140,13 +140,22 @@ export const uploadFileToStore = async (
 
     // Check for error in operation result
     if (opAny.result?.error) {
-      throw new Error(`Upload failed: ${opAny.result.error.message ?? "Unknown"}`);
+      throw new Error(
+        `Upload failed: ${opAny.result.error.message ?? "Unknown"}`
+      );
     }
 
     console.log(`Upload & Index complete for ${displayName}`);
 
     // The response is in operation.result.response
-    return opAny.result?.response || opAny.response;
+    const response = (opAny.result?.response || opAny.response) as
+      | {
+          name?: string;
+          uri?: string;
+        }
+      | undefined;
+
+    return response || null;
   } catch (error) {
     console.error("Error uploading/importing file:", error);
     throw error;
