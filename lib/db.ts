@@ -26,7 +26,7 @@ export const getDocuments = (): StoredDocument[] => {
     const data = fs.readFileSync(DB_PATH, "utf-8");
     const parsed = JSON.parse(data);
     return Array.isArray(parsed?.documents) ? parsed.documents : [];
-  } catch (error) {
+  } catch {
     return [];
   }
 };

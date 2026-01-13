@@ -24,16 +24,31 @@ export default function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      // Abort any ongoing requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && isMountedRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
   // Auto-resize textarea
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && isMountedRef.current) {
       textareaRef.current.style.height = "auto";
       const newHeight = Math.min(textareaRef.current.scrollHeight, 120);
       textareaRef.current.style.height = `${newHeight}px`;
@@ -41,59 +56,139 @@ export default function ChatInterface({ onFirstMessage }: ChatInterfaceProps) {
   }, [input]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !isMountedRef.current) return;
 
     const userMsg: Message = { role: "user", content: input.trim() };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
 
-    // Notify parent that first message was sent
-    if (onFirstMessage && messages.length === 1) {
-      onFirstMessage();
+    // Abort any previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
     }
 
-    setIsLoading(true);
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    if (isMountedRef.current) {
+      setMessages((prev) => [...prev, userMsg]);
+      setInput("");
+
+      // Notify parent that first message was sent
+      if (onFirstMessage && messages.length === 1) {
+        onFirstMessage();
+      }
+
+      setIsLoading(true);
+    }
 
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: [...messages, userMsg] }),
+        signal: abortController.signal,
       });
+
+      if (!isMountedRef.current) return;
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `HTTP error! status: ${response.status}`
+        );
+      }
 
       if (!response.body) throw new Error("No response body");
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let botMsg: Message = { role: "model", content: "" };
+      const botMsg: Message = { role: "model", content: "" };
 
       // Add placeholder for streaming
-      setMessages((prev) => [...prev, botMsg]);
+      if (isMountedRef.current) {
+        setMessages((prev) => [...prev, botMsg]);
+      }
 
-      while (true) {
+      while (isMountedRef.current && !abortController.signal.aborted) {
         const { done, value } = await reader.read();
-        if (done) break;
+
+        if (done || !isMountedRef.current) break;
+
+        if (abortController.signal.aborted) {
+          reader.cancel();
+          break;
+        }
 
         const chunk = decoder.decode(value, { stream: true });
         botMsg.content += chunk;
 
-        setMessages((prev) => {
-          const newMsgs = [...prev];
-          newMsgs[newMsgs.length - 1] = { ...botMsg };
-          return newMsgs;
-        });
+        if (isMountedRef.current) {
+          setMessages((prev) => {
+            if (!isMountedRef.current) return prev;
+            const newMsgs = [...prev];
+            newMsgs[newMsgs.length - 1] = { ...botMsg };
+            return newMsgs;
+          });
+        }
       }
-    } catch (error) {
+
+      // Clean up reader if aborted
+      if (abortController.signal.aborted) {
+        reader.cancel();
+      }
+    } catch (error: unknown) {
+      // Don't show error if request was aborted or component unmounted
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      if (!isMountedRef.current) {
+        return;
+      }
+
       console.error(error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "model",
-          content: "Sorry, I encountered an error retrieving that information.",
-        },
-      ]);
+
+      if (isMountedRef.current) {
+        let errorMessage =
+          "Sorry, I encountered an error retrieving that information.";
+
+        const message = error instanceof Error ? error.message : "";
+
+        // Handle specific error codes from API
+        if (
+          message.includes("429") ||
+          message.includes("RATE_LIMIT")
+        ) {
+          errorMessage =
+            "Too many requests. Please wait a moment and try again.";
+        } else if (
+          message.includes("503") ||
+          message.includes("UNAVAILABLE")
+        ) {
+          errorMessage =
+            "The service is temporarily unavailable. Please try again later.";
+        } else if (
+          message.includes("402") ||
+          message.includes("BUDGET")
+        ) {
+          errorMessage = "Service quota exhausted. Please try again later.";
+        }
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "model",
+            content: errorMessage,
+          },
+        ]);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+      // Clear abort controller reference if this was the current request
+      if (abortControllerRef.current === abortController) {
+        abortControllerRef.current = null;
+      }
     }
   };
 
