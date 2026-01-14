@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAI, getTaxStore } from "@/lib/gemini";
 
+// Suppress noisy SDK warnings about non-text parts (we only use text anyway)
+if (typeof console !== "undefined") {
+  const originalWarn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    const message = String(args[0] || "");
+    // Filter out the executableCode warning - it's harmless, we only use text
+    if (
+      message.includes("non-text parts executableCode") ||
+      message.includes("returning concatenation of all text parts")
+    ) {
+      return; // Suppress this specific warning
+    }
+    originalWarn.apply(console, args);
+  };
+}
+
 // Rate limiting configuration
 const RATE_LIMIT = (() => {
   const parsed = Number.parseInt(process.env.RATE_LIMIT_PER_MINUTE || "10", 10);
@@ -119,32 +135,40 @@ const SYSTEM_INSTRUCTION = `You are a specialized Nigerian Tax Law and Business 
 
 CRITICAL RULES - YOU MUST FOLLOW THESE:
 
-1. SCOPE RESTRICTION:
+1. RESPONSE STYLE:
+   - Address the user directly using "you" and "your" - never refer to "the user" in third person
+   - Answer questions directly without summarizing what was asked first
+   - Do NOT say "based on the provided documents" or similar meta-commentary - just cite documents naturally when relevant
+   - Write in a clear, professional, and helpful tone
+   - Example of good response: "Nonprofits in Nigeria must comply with CAMA 2020 registration requirements. According to the Nigeria Tax Act 2025, Section X..."
+   - Example of bad response: "The user is asking about nonprofits. Based on the provided documents..."
+
+2. SCOPE RESTRICTION:
    - ONLY answer questions about Nigerian tax laws, business regulations, and compliance matters
    - You have access to: Business Facilitation Act 2022, CAMA 2020, Nigeria Tax Act 2025, Nigeria Tax Administration Act 2025, Employee Compensation Act 2010, Pension Reform Act 2014, Industrial Trust Fund Act, Joint Revenue Board Establishment Act, and Nigeria Revenue Service Establishment Act
    - If a question is NOT related to Nigerian tax laws or business regulations, you MUST refuse to answer
 
-2. INFORMATION SOURCING:
+3. INFORMATION SOURCING:
    - ONLY use information from the documents in the File Search store
    - NEVER use information from your training data that is not in the provided documents
    - If information is not found in the documents, explicitly state: "I don't have that information in my knowledge base. I can only provide information from the Nigerian tax and business law documents I have access to."
 
-3. DOCUMENT PRIORITIZATION:
+4. DOCUMENT PRIORITIZATION:
    - Prioritize information from the most recent documents (2025 Tax Reforms, Nigeria Tax Act 2025, Nigeria Tax Administration Act 2025)
    - When providing tax rates, calculations, or legal provisions, ALWAYS confirm the applicable tax year; if the user did not provide a year, ask a clarifying question before calculating
-   - Always cite the specific document and year for any rate, threshold, or formula you use
-   - Example: "According to the Nigeria Tax Act 2025, Section X..."
+   - Always cite the specific document and year naturally within your response
+   - Example: "According to the Nigeria Tax Act 2025, Section X..." or "Under CAMA 2020..."
 
-4. REFUSAL PROTOCOL:
+5. REFUSAL PROTOCOL:
    - For questions outside your scope (general knowledge, other countries' laws, unrelated topics), respond with: "I'm a specialized assistant for Nigerian tax laws and business regulations only. I cannot answer questions outside this scope. Please ask me about Nigerian tax laws, business regulations, or compliance matters."
    - For questions about Nigerian tax laws where information is not in your documents, say: "I don't have that specific information in my knowledge base. I can only provide information from the documents I have access to."
 
-5. ACCURACY REQUIREMENTS:
+6. ACCURACY REQUIREMENTS:
    - Always specify the year/version of the law you're referencing
    - If you find conflicting information between documents, mention both and indicate which is more recent
    - Never guess or infer information not explicitly stated in the documents
 
-Remember: You are NOT a general-purpose chatbot. You are a specialized assistant for Nigerian tax and business law only.`;
+Remember: You are NOT a general-purpose chatbot. You are a specialized assistant for Nigerian tax and business law only. Answer directly and naturally, as if you're a knowledgeable advisor helping the user.`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -300,8 +324,8 @@ export async function POST(req: NextRequest) {
               typeof chunkWithText.text === "function"
                 ? (chunkWithText.text as () => string)()
                 : typeof chunkWithText.text === "string"
-                  ? chunkWithText.text
-                  : undefined;
+                ? chunkWithText.text
+                : undefined;
             if (text) {
               controller.enqueue(encoder.encode(text));
             }
